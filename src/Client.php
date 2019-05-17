@@ -7,6 +7,8 @@ use GuzzleHttp\Exception\ClientException;
 
 use SimpleXMLElement;
 
+use LukaPeharda\HmrcExchangeRates\Exceptions\FileNotFound;
+
 class Client
 {
     /**
@@ -25,7 +27,7 @@ class Client
 
     public function __construct()
     {
-        $this->client = new GuzzleClient;
+        $this->client = new GuzzleClient();
     }
 
     /**
@@ -33,8 +35,8 @@ class Client
      *
      * If year and/or month are not provided current ones will be used.
      *
-     * @param   integer  $year
-     * @param   integer  $month
+     * @param   int  $year
+     * @param   int  $month
      *
      * @return  SimpleXMLElement
      */
@@ -50,7 +52,7 @@ class Client
         } catch (ClientException $exception) {
             // Catch 404 instance and throw custom exception
             if ($exception->getResponse()->getStatusCode() === 404) {
-                throw new FileNotFoundException("XML file with exchange rates for year $month/$year.");
+                throw new FileNotFound("XML file with exchange rates for year $month/$year.");
             }
 
             throw $exception;

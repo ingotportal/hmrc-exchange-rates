@@ -11,7 +11,6 @@ class XmlHandler
      * Load XML from file.
      *
      * @param   string  $filePath
-     *
      * @return  SimpleXMLElement
      */
     public function loadFromFile($filePath)
@@ -24,8 +23,7 @@ class XmlHandler
      *
      * @param   SimpleXMLElement  $simpleXml
      * @param   string            $filePath
-     *
-     * @return  integer
+     * @return  int
      */
     public function saveToFile(SimpleXMLElement $simpleXml, $filePath)
     {
@@ -41,7 +39,6 @@ class XmlHandler
      * Convert simple XML to array with currency code as key and rate as value.
      *
      * @param   SimpleXMLElement  $simpleXml
-     *
      * @return  array
      */
     public function convertXmlToArray($simpleXml)
@@ -50,7 +47,7 @@ class XmlHandler
 
         foreach ($simpleXml->children() as $node) {
 
-            $rates[(string)$node->currencyCode] = (float) $node->rateNew;
+            $rates[(string) $node->currencyCode] = (float) $node->rateNew;
         }
 
         return $rates;

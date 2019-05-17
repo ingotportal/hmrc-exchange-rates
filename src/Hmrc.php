@@ -2,9 +2,7 @@
 
 namespace LukaPeharda\HmrcExchangeRates;
 
-use LukaPeharda\HmrcExchangeRates\XmlHandler;
-use LukaPeharda\HmrcExchangeRates\Client as HmrcClient;
-use LukaPeharda\HmrcExchangeRates\CurrencyNotFoundException;
+use LukaPeharda\HmrcExchangeRates\Exceptions\CurrencyNotFound;
 
 class Hmrc
 {
@@ -31,16 +29,16 @@ class Hmrc
      */
     public function __construct($storagePath = null)
     {
-        $this->client = new HmrcClient;
+        $this->client = new Client();
         $this->storagePath = $storagePath ?? '/tmp';
     }
 
     /**
      * Get monthly rates.
      *
-     * @param   integer  $year
-     * @param   integer  $month
-     * @param   boolean  $useCache
+     * @param   int  $year
+     * @param   int  $month
+     * @param   bool  $useCache
      *
      * @return  array
      */
@@ -51,7 +49,7 @@ class Hmrc
 
         $filePath = rtrim($this->storagePath, '/') . '/rates-' . $month . $year . '.xml';
 
-        $xmlHandler = new XmlHandler;
+        $xmlHandler = new XmlHandler();
 
         if ($useCache && file_exists($filePath)) {
             $xml = $xmlHandler->loadFromFile($filePath);
@@ -61,9 +59,7 @@ class Hmrc
             $xmlHandler->saveToFile($xml, $filePath);
         }
 
-        $rates = $xmlHandler->convertXmlToArray($xml);
-
-        return $rates;
+        return $xmlHandler->convertXmlToArray($xml);
     }
 
 
@@ -71,9 +67,9 @@ class Hmrc
      * Return monthly exchange rate for given currency
      *
      * @param   string  $currency  ISO 4271 format
-     * @param   integer  $year
-     * @param   integer  $month
-     * @param   boolean  $useCache
+     * @param   int  $year
+     * @param   int  $month
+     * @param   bool  $useCache
      *
      * @return  float
      */
@@ -86,8 +82,8 @@ class Hmrc
 
         $currency = strtoupper($currency);
 
-        if (false === array_key_exists($currency, $rates)) {
-            throw new CurrencyNotFoundException("Currency $currency not found for $month/$year.");
+        if (array_key_exists($currency, $rates) === false) {
+            throw new CurrencyNotFound("Currency $currency not found for $month/$year.");
         }
 
         return $rates[$currency];
